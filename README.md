@@ -58,12 +58,13 @@ on every relog.
 
 ## How it works
 
-`receivePlayerConnect` in `zombie.network.GameServer` gains a post-login
-re-assert: 30 s, 90 s and 180 s after full connect, if the player is still
-connected and steam mode is enabled, `SteamGameServer.AddPlayer` is issued
-again. By then the session is mature and the call sticks — the exact call
-the game's own role-change path (`SetAccessLevelCommand`) uses, which is
-what made the bug visible to us in the first place.
+`receivePlayerConnect` in `zombie.network.GameServer` gains a single
+post-login re-assert: 60 s after full connect, if the player is still
+connected, `SteamGameServer.AddPlayer` is issued once. By then the session
+is mature and the call sticks — the exact call the game's own role-change
+path (`SetAccessLevelCommand`) uses, which is what made the bug visible to
+us in the first place. The re-assert is silent: one log line on success,
+output only on error.
 
 Each fire is logged (`VisibleStaff: ...` on stdout) so you can confirm it
 is alive, and the full patch source is included

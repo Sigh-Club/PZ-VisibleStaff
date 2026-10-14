@@ -2605,24 +2605,19 @@ public class GameServer {
     // appear in the reported count. Re-assert the entry once the session has
     // settled; harmless duplicates; visible roles only.
     private static void visibleStaffScheduleReassert(final IConnection connection, final IsoPlayer player) {
-        int[] delays = {30000, 90000, 180000};
-        for (final long delay : delays) {
         visibleStaffTimer.schedule(new java.util.TimerTask() {
             @Override
             public void run() {
                 try {
-                    System.out.println("VisibleStaff: fire " + delay + "ms id=" + player.getOnlineID());
-                    if (player == null || player.getOnlineID() == -1 || !Players.contains(player)) { System.out.println("VisibleStaff: skip gone"); return; }
+                    if (player == null || player.getOnlineID() == -1 || !Players.contains(player)) return;
                     if (SteamUtils.isSteamModeEnabled()) {
                         SteamGameServer.AddPlayer(player);
-                        System.out.println("VisibleStaff: AddPlayer issued");
                     }
                 } catch (Throwable t) {
                     System.out.println("VisibleStaff: re-assert failed: " + t);
                 }
             }
-        }, delay);
-        }
+        }, 60000L);
     }
 
     public static void receivePlayerConnect(ByteBufferReader bb, IConnection connection, String username) {
